@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +41,8 @@ public class DataSourceConfig {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
     DataSource dataSource;
-
+    
     for (String host : hosts) {
-      // should ping host as primary test
       String url = prefix + "://" + host + ":" + port + "/" + dbname;
       logger.info("Testing DB connection: " + url);
       try {
