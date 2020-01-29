@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.sec.config.datasourceconfig;
+package com.sec.config;
 
 import java.sql.SQLException;
 import javax.sql.DataSource;
