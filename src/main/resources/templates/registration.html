@@ -8,6 +8,7 @@
 	<div layout:fragment="loginContent">
 
 		<form name="registration" th:action="@{/reg}" th:object="${user}" method="post" class="form-signin">
+                        <div id="err" th:if="${param.alreadyexists}" class="alert alert-danger">Ezen az email címen már regisztrált felhasználói!</div>
 			<h2 class="form-signin-heading">Kérlek regisztrálj</h2>
 				<input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-control" placeholder="Teljes név"  /> 
 		 	    <input type="text" id="email" name="username" th:field="*{email}" class="form-control" placeholder="E-mail cím"  /> 

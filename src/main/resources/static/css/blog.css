@@ -1,3 +1,14 @@
+html, body, #wrap {height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#main {padding-bottom: 50px;}  /* must be same height as the footer */
+
+#footer {position: relative;
+	margin-top: -50px; /* negative value of footer height */
+	height: 50px;
+	clear:both;} 
+
 .navbar {
 	margin-top:20px;
 }
@@ -57,3 +68,4 @@ address {
 .navbar-default .navbar-collapse, .navbar-default .navbar-form {
     border-color: #c7b7d6;
 }
+

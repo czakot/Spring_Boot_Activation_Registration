@@ -85,8 +85,8 @@ public class User {
 	
 	
 	public Boolean getEnabled() {
-		return true;
-//		return enabled;
+//		return true;
+		return enabled;
 	}
 
 	public void setEnabled(Boolean enabled) {

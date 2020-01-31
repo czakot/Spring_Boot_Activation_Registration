@@ -1,5 +1,6 @@
 package com.sec.service;
 
+import com.sec.entity.User;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +24,16 @@ public class EmailService {
 	}
 
 
-	public void sendMessage(String email) {
+	public void sendMessage(User user) {
 		SimpleMailMessage message = null;
+                String email = user.getEmail();
 		
 		try {
 			message = new SimpleMailMessage();
 			message.setFrom(MESSAGE_FROM);
 			message.setTo(email);
 			message.setSubject("Sikeres regisztrálás");
-			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!");
+			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!\\ Validálás: ...");
 			javaMailSender.send(message);
 			
 		} catch (Exception e) {

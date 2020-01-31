@@ -10,7 +10,7 @@
 		<form name="login" th:action="@{/login}" method="post" class="form-signin">
 			<h2 class="form-signin-heading">Kérlek jelentkezz be</h2>
 			<div id="err" th:if="${param.error}" class="alert alert-danger">Hibás felhasználói név és jelszó</div>
-			<div th:if="${param.logout}" class="alert alert-success">Sikeresen kijelentkeztél</div>
+			<div id="succ" th:if="${param.logout}" class="alert alert-success">Sikeresen kijelentkeztél</div>
 			<label for="username" class="sr-only">Felhasználói név</label> 
 			    <input type="text" id="username" name="username" class="form-control" placeholder="Felhasználói név" required="true" /> 
 			<label for="password" class="sr-only">Jelszó</label> 

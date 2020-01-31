@@ -20,12 +20,11 @@ import com.sec.repo.UserRepository;
 public class UserServiceImpl implements UserService, UserDetailsService {
 	
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
+	private final String USER_ROLE = "USER";
 
 	private UserRepository userRepository;
-
 	private RoleRepository roleRepository;
-
-	private final String USER_ROLE = "USER";
+        private EmailService emailService;
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User userCheck = userRepository.findByEmail(userToRegister.getEmail());
 
 		if (userCheck != null)
-			return "alreadyExists";
+			return "already exists";
 
 		Role userRole = roleRepository.findByRole(USER_ROLE);
 		if (userRole != null) {
@@ -62,11 +61,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			userToRegister.addRoles(USER_ROLE);
 		}
 		
-//		userToRegister.setEnabled(false);
-		userToRegister.setEnabled(true);
+		userToRegister.setEnabled(false);
+//		userToRegister.setEnabled(true);
 		userToRegister.setActivation(generateKey());
 		userRepository.save(userToRegister);
 		
+//                emailService.sendMessage(userToRegister);
+//                emailService.sendMessage(userToRegister);
 
 		return "ok";
 	}

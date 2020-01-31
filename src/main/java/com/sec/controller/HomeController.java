@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.sec.entity.User;
 import com.sec.service.EmailService;
 import com.sec.service.UserService;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 @Controller
@@ -24,6 +25,7 @@ public class HomeController {
 	
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
+    @Qualifier("UserServiceImpl") // not nessessary, UserService unique here
     private UserService userService;
     
     private EmailService emailService;
@@ -53,7 +55,7 @@ public class HomeController {
 		return "stories";
 	}
 	
-	@RequestMapping("/registration")
+	@RequestMapping(value={"/registration", "/registration?alreadyexists"})
 	public String registration(Model model){
 		model.addAttribute("user", new User());
 		return "registration";
@@ -61,14 +63,16 @@ public class HomeController {
 	
 //	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	@PostMapping("/reg")
-    public String reg(@ModelAttribute User user) {
+    public String reg(@ModelAttribute User userToRegister) {
 		log.info("Uj user!");
 //		emailService.sendMessage(user.getEmail());
-		log.debug(user.getFullName());
-		log.debug(user.getEmail());
-		log.debug(user.getPassword());
-		userService.registerUser(user);
-        return "auth/login";
+		log.debug(userToRegister.getFullName());
+		log.debug(userToRegister.getEmail());
+		log.debug(userToRegister.getPassword());
+		String result = userService.registerUser(userToRegister);
+                log.info("Result = " + result);
+                if (result.equals("already exists")) return "/registration?alreadyexists";
+                return "/login";
     }
 	
 	 @RequestMapping(path = "/activation/{code}", method = RequestMethod.GET)

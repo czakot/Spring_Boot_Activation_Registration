@@ -38,19 +38,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSec) throws Exception {
 		httpSec
 			.authorizeRequests()
+                                .antMatchers("/css/*").permitAll()
 				.antMatchers("/admin/**").hasRole("ADMIN")
-				.antMatchers("/registration").permitAll()
+//				.antMatchers("/registration").permitAll()
+				.antMatchers("/registration", "/registration?alreadyexists").permitAll()
 				.antMatchers("/reg").permitAll()
 				.antMatchers("/activation/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()
-				.loginPage("/login")
-				.permitAll()
+				.loginPage("/login").permitAll()
 				.and()
 			.logout()
-				.logoutSuccessUrl("/login?logout")
-				.permitAll();
+				.logoutSuccessUrl("/login?logout").permitAll();
 	}	
 	
 }
