@@ -37,7 +37,8 @@
                             </ul>
                             <div class="navbar-text navbar-right">
                                 <div sec:authorize="isAuthenticated()">
-                                    Üdvözlünk <span sec:authentication="name">Anonymous </span>
+                                    <!--Üdvözlünk <span sec:authentication="name">Anonymous </span>-->
+                                    Üdvözlünk <span th:text="${#authentication.getPrincipal().getFullName()}">Anonymous </span>
                                     <form sec:authorize="isAuthenticated()" id="frmlogout" th:action="@{/logout}" method="post" class="form-inline">
                                         | <a href="javascript:{}" onclick="document.getElementById('frmlogout').submit(); return false;">Kijelentkezés</a>
                                     </form>

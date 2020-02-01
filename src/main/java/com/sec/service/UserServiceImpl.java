@@ -27,6 +27,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         private EmailService emailService;
 
 	@Autowired
+        public void setEmailService(EmailService emailService) {
+          this.emailService = emailService;
+        }
+
+	@Autowired
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
@@ -52,7 +57,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		User userCheck = userRepository.findByEmail(userToRegister.getEmail());
 
 		if (userCheck != null)
-			return "already exists";
+			return "already_exists";
 
 		Role userRole = roleRepository.findByRole(USER_ROLE);
 		if (userRole != null) {
@@ -62,12 +67,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		
 		userToRegister.setEnabled(false);
-//		userToRegister.setEnabled(true);
 		userToRegister.setActivation(generateKey());
 		userRepository.save(userToRegister);
 		
-//                emailService.sendMessage(userToRegister);
-//                emailService.sendMessage(userToRegister);
+                emailService.sendMessage(userToRegister);
 
 		return "ok";
 	}

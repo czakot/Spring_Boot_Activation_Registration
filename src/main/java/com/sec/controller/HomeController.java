@@ -18,6 +18,7 @@ import com.sec.entity.User;
 import com.sec.service.EmailService;
 import com.sec.service.UserService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -55,7 +56,7 @@ public class HomeController {
 		return "stories";
 	}
 	
-	@RequestMapping(value={"/registration", "/registration?alreadyexists"})
+	@RequestMapping("/registration")
 	public String registration(Model model){
 		model.addAttribute("user", new User());
 		return "registration";
@@ -63,7 +64,7 @@ public class HomeController {
 	
 //	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	@PostMapping("/reg")
-    public String reg(@ModelAttribute User userToRegister) {
+    public String reg(@ModelAttribute User userToRegister, Model model) {
 		log.info("Uj user!");
 //		emailService.sendMessage(user.getEmail());
 		log.debug(userToRegister.getFullName());
@@ -71,8 +72,14 @@ public class HomeController {
 		log.debug(userToRegister.getPassword());
 		String result = userService.registerUser(userToRegister);
                 log.info("Result = " + result);
-                if (result.equals("already exists")) return "/registration?alreadyexists";
-                return "/login";
+                if (result.equals("already_exists")) {
+                  User newUser = new User();
+                  newUser.setEmail(userToRegister.getEmail());
+		  model.addAttribute("user", newUser);
+                  model.addAttribute("result", result);
+                  return "registration";
+                }
+                return "auth/login";
     }
 	
 	 @RequestMapping(path = "/activation/{code}", method = RequestMethod.GET)
