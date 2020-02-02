@@ -41,12 +41,7 @@ public class HomeController {
 //	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	@PostMapping("/reg")
     public String reg(@ModelAttribute User userToRegister, Model model) {
-		log.info("Uj user!");
-		log.debug(userToRegister.getFullName());
-		log.debug(userToRegister.getEmail());
-		log.debug(userToRegister.getPassword());
 		String result = userService.registerUser(userToRegister);
-                log.info("Result = " + result);
                 if (result.equals("already_exists")) {
                   User newUser = new User();
                   newUser.setEmail(userToRegister.getEmail());
@@ -54,12 +49,19 @@ public class HomeController {
                   model.addAttribute("result", result);
                   return "registration";
                 }
+                if (result.equals("registrated")) {
+                  model.addAttribute("result", result);
+                }
                 return "auth/login";
     }
 	
 	 @RequestMapping(path = "/activation/{code}", method = RequestMethod.GET)
-	    public String activation(@PathVariable("code") String code, HttpServletResponse response) {
+//	    public String activation(@PathVariable("code") String code, HttpServletResponse response) {
+	    public String activation(@PathVariable("code") String code, Model model) {
 		String result = userService.userActivation(code);
+                if (result.equals("activated")) {
+                  model.addAttribute("result", result);
+                }
 		return "auth/login";
 	 }
 

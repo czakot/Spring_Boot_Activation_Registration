@@ -10,7 +10,9 @@
         <form name="login" th:action="@{/login}" method="post" class="form-signin">
             <h2 class="form-signin-heading">Kérlek jelentkezz be</h2>
             <div id="err" th:if="${param.error}" class="alert alert-danger">Hibás felhasználói név és/vagy jelszó!</div>
-            <div id="succ" th:if="${param.logout}" class="alert alert-success">Sikeresen kijelentkeztél</div>
+            <div id="succquit" th:if="${param.logout}" class="alert alert-success">Sikeresen kijelentkeztél</div>
+            <div id="succreg" th:if="${result} == 'registrated'" class="alert alert-success">Sikeresen regisztráltál!<br/>Aktiváláshoz email küldve.</div>
+            <div id="succact" th:if="${result} == 'activated'" class="alert alert-success">Sikeresen aktiváltad a regisztrációdat!</div>
             <label for="username" class="sr-only">Felhasználói név</label> 
                 <!--<input type="text" id="username" name="username" class="form-control" placeholder="Felhasználói név" required="true" />--> 
                 <input type="text" id="username" name="username" class="form-control" placeholder="Felhasználói név" required="true" value="huggy.bear@freemail.hu"/> 

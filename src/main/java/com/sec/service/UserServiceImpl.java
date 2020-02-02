@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
                 emailService.sendMessage(userToRegister);
 
-		return "ok";
+		return "registrated";
 	}
 
 	public String generateKey()
@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setEnabled(true);
 		user.setActivation("");
 		userRepository.save(user);
-		return "ok";
+		return "activated";
 	}
 	
 
