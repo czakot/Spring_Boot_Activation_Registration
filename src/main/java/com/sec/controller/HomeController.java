@@ -49,7 +49,7 @@ public class HomeController {
                   model.addAttribute("result", result);
                   return "registration";
                 }
-                if (result.equals("registrated")) {
+                if (result.equals("registered")) {
                   model.addAttribute("result", result);
                 }
                 return "auth/login";

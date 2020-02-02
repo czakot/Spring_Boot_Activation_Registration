@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
                 emailService.sendMessage(userToRegister);
 
-		return "registrated";
+		return "registered";
 	}
 
 	public String generateKey()
@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			word[j] = (char) ('a' + random.nextInt(26));
 		}
 		String toReturn = new String(word);
-		log.debug("random code: " + toReturn);
 		return new String(word);
     }
 
