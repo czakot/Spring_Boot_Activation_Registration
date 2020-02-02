@@ -15,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sec.entity.User;
-import com.sec.service.EmailService;
 import com.sec.service.UserService;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -29,34 +27,12 @@ public class HomeController {
     @Qualifier("UserServiceImpl") // not nessessary, UserService unique here
     private UserService userService;
     
-    private EmailService emailService;
-
-	@Autowired
-	public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
-	
 	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
-	
-	@RequestMapping("/")
-	public String home(){
-		return "index";
-	}
-	
-	@RequestMapping("/bloggers")
-	public String bloggers(){
-		return "bloggers";
-	}
-	
-	@RequestMapping("/stories")
-	public String stories(){
-		return "stories";
-	}
-	
-	@RequestMapping("/registration")
+
+        @RequestMapping("/registration")
 	public String registration(Model model){
 		model.addAttribute("user", new User());
 		return "registration";
@@ -66,7 +42,6 @@ public class HomeController {
 	@PostMapping("/reg")
     public String reg(@ModelAttribute User userToRegister, Model model) {
 		log.info("Uj user!");
-//		emailService.sendMessage(user.getEmail());
 		log.debug(userToRegister.getFullName());
 		log.debug(userToRegister.getEmail());
 		log.debug(userToRegister.getPassword());

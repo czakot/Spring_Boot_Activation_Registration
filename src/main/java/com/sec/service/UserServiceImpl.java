@@ -15,27 +15,26 @@ import com.sec.entity.Role;
 import com.sec.entity.User;
 import com.sec.repo.RoleRepository;
 import com.sec.repo.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
-	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 	private final String USER_ROLE = "USER";
 
 	private UserRepository userRepository;
 	private RoleRepository roleRepository;
         private EmailService emailService;
+        private PasswordEncoder passwordEncoder;
 
-	@Autowired
-        public void setEmailService(EmailService emailService) {
+        @Autowired
+        public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+          this.userRepository = userRepository;
+          this.roleRepository = roleRepository;
           this.emailService = emailService;
+          this.passwordEncoder = passwordEncoder;
         }
-
-	@Autowired
-	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-	}
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -68,6 +67,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		
 		userToRegister.setEnabled(false);
 		userToRegister.setActivation(generateKey());
+                userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
 		userRepository.save(userToRegister);
 		
                 emailService.sendMessage(userToRegister);
