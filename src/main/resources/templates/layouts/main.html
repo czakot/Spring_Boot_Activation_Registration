@@ -36,13 +36,17 @@
                                 <li class=""><a href="/bloggers">Bloggerek</a></li>
                             </ul>
                             <div class="navbar-text navbar-right">
-                                <div sec:authorize="isAuthenticated()">
+                                <span sec:authorize="isAuthenticated()">
                                     <!--Üdvözlünk <span sec:authentication="name">Anonymous </span>-->
                                     Üdvözlünk <span th:text="${#authentication.getPrincipal().getFullName()}">Anonymous </span>
                                     <form sec:authorize="isAuthenticated()" id="frmlogout" th:action="@{/logout}" method="post" class="form-inline">
-                                        | <a href="javascript:{}" onclick="document.getElementById('frmlogout').submit(); return false;">Kijelentkezés</a>
+                                        | <a href="javascript:{}" onclick="document.getElementById('frmlogout').submit(); return false;">Kijelentkezés |</a>
                                     </form>
-                                </div>
+                                </span>
+                                <span >
+                                    <a href="?lang=hu" onclick="document.cookie='secAppLocal=hu'"> HU </a>
+                                    | 
+                                    <a href="?lang=en" onclick="document.cookie='secAppLocal=en'"> EN</a></span>
                             </div>
                         </div>
 		    </div>
@@ -55,7 +59,8 @@
     </div>
     <div id="footer">
         <footer class="container">
-            <p>San Franciscoból Jöttem - Az eredeti template összeállítója: http://therealdanvega.com</p>
+            <span th:text="#{footer}">footer</span>
+            
         </footer>        
     </div>
 
