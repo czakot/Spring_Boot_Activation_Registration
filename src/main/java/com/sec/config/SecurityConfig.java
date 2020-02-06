@@ -1,5 +1,6 @@
 package com.sec.config;
 
+import com.sec.repo.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         @Bean
         public PasswordEncoder passwordEncoder() {
             return new BCryptPasswordEncoder();
+        }
+        
+        RoleRepository roleRepository;
+        
+        @Autowired
+        public void setRoleRepository(RoleRepository roleRepository) {
+            this.roleRepository = roleRepository;
         }
 
 	@Bean
@@ -42,14 +50,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasRole("ADMIN")
 				.antMatchers("/registration").permitAll()
 				.antMatchers("/reg").permitAll()
+				.antMatchers("/admin_init").permitAll()
+				.antMatchers("/adminreg").permitAll()
 				.antMatchers("/activation/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()
+//				.loginPage("/admin_init").permitAll()
 				.loginPage("/login").permitAll()
 				.and()
 			.logout()
 				.logoutSuccessUrl("/login?logout").permitAll();
+
+//                if (roleRepository.findByRole("ADMIN") != null) {
+//                    httpSec.formLogin().loginPage("/login").permitAll();
+//                } else {
+//                    httpSec.formLogin().loginPage("/admin_init").permitAll();
+//                }
+                  
 	}	
 	
 }

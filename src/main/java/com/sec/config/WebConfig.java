@@ -13,7 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 //		super.addViewControllers(registry); // deprecated
-        registry.addViewController("/").setViewName("index");
+//        registry.addViewController("/adminreg").setViewName("auth/adminreg");
+//        registry.addViewController("/").setViewName("auth/admin_init");
+        registry.addViewController("/admin_init").setViewName("auth/admin_init");
+        registry.addViewController("/login").setViewName("auth/login");
+//        registry.addViewController("/").setViewName("index");
         registry.addViewController("/index").setViewName("index");
         registry.addViewController("/bloggers").setViewName("bloggers");
         registry.addViewController("/stories").setViewName("stories");

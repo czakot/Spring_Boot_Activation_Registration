@@ -15,102 +15,105 @@ import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
 @Entity
-@Table( name="users" )
+@Table(name = "users")
 public class User {
 
-	@Id @GeneratedValue
-	private Long id;
-	
-	@Column( unique=true, nullable=false )
-	private String email;
-	
-	@Column( nullable=false )
-	private String password;
-	
-	private String fullName;
-	
-	private String activation;
-	
-	private Boolean enabled;
-	
-	@ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
-	@JoinTable( 
-		name = "users_roles", 
-		joinColumns = {@JoinColumn(name="user_id")}, 
-		inverseJoinColumns = {@JoinColumn(name="role_id")}  
-	)
-	private Set<Role> roles = new HashSet<Role>();
-	
-	public User() {}
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Column(unique = true, nullable = false)
+    private String email;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(nullable = false)
+    private String password;
 
-	public String getEmail() {
-		return email;
-	}
+    private String fullName;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    private String activation;
 
-	public String getPassword() {
-		return password;
-	}
+    private Boolean enabled;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = {
+                @JoinColumn(name = "user_id")},
+            inverseJoinColumns = {
+                @JoinColumn(name = "role_id")}
+    )
+    private Set<Role> roles = new HashSet<Role>();
 
-	public String getFullName() {
-		return fullName;
-	}
+    public User() {
+    }
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Set<Role> getRoles() {
-		return roles;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
-	
-	
-	public Boolean getEnabled() {
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Boolean getEnabled() {
 //		return true;
-		return enabled;
-	}
+        return enabled;
+    }
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public String getActivation() {
-		return activation;
-	}
+    public String getActivation() {
+        return activation;
+    }
 
-	public void setActivation(String activation) {
-		this.activation = activation;
-	}
+    public void setActivation(String activation) {
+        this.activation = activation;
+    }
 
-	public void addRoles(String roleName) {
-		if (this.roles == null || this.roles.isEmpty()) 
-			this.roles = new HashSet<>();
-		this.roles.add(new Role(roleName));
-	}
+    public void addRoles(String roleName) {
+        if (this.roles == null || this.roles.isEmpty()) {
+            this.roles = new HashSet<>();
+        }
+        this.roles.add(new Role(roleName));
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", email=" + email + ", password=" + password + "]";
-	}
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", email=" + email + ", password=" + password + "]";
+    }
 
-	
 }
