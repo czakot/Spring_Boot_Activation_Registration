@@ -1,5 +1,6 @@
 package com.sec.controller;
 
+import com.sec.SecApplication;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sec.entity.User;
+import com.sec.repo.RoleRepository;
 import com.sec.service.UserService;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,20 +35,38 @@ public class HomeController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
-    
+
     @Autowired
-    ApplicationContext ctx;
-    
+    RoleRepository roleRepository;
+
+    @RequestMapping("/prelogin")
+    public String preloginAdminCheck(Model model) {
+        if (roleRepository.findByRole("ADMIN") != null) {
+            return "auth/login";
+        } else {
+            model.addAttribute("user", new User());
+            return "auth/adminregistration";
+        }
+    }
 
     @PostMapping("/adminreg")
-//    @ResponseBody
-    public String adminRegistration(@RequestParam Map<String, String> adminParams) throws Exception {
-        log.info(adminParams.entrySet().toString());
-        System.out.println("HttpSecurity exists: " + ctx.containsBean("httpSecurity"));
-        System.out.println("AuthenticationManagerBuilder exists: " + ctx.containsBean("authenticationManagerBuilder"));
-        System.out.println("ViewControllerRegistry exists: " + ctx.containsBean("viewControllerRegistry"));
-
+    public String adminReg(@ModelAttribute User adminToRegister) {
+        userService.registerAdmin(adminToRegister);
+        org.springframework.boot.devtools.restart.Restarter.getInstance().restart(); 
         return "auth/login";
+    }
+
+    @RequestMapping("/restart")
+    private void restart() {
+        Thread restartThread = new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                SecApplication.restart();
+            } catch (InterruptedException ignored) {
+            }
+        });
+        restartThread.setDaemon(false);
+        restartThread.start();
     }
 
     @RequestMapping("/registration")

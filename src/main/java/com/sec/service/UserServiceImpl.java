@@ -20,84 +20,94 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
-	private final String USER_ROLE = "USER";
+    private final String USER_ROLE = "USER";
+    private final String ADMIN_ROLE = "ADMIN";
 
-	private UserRepository userRepository;
-	private RoleRepository roleRepository;
-        private EmailService emailService;
-        private PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
+    private RoleRepository roleRepository;
+    private EmailService emailService;
+    private PasswordEncoder passwordEncoder;
 
-        @Autowired
-        public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
-          this.userRepository = userRepository;
-          this.roleRepository = roleRepository;
-          this.emailService = emailService;
-          this.passwordEncoder = passwordEncoder;
-        }
-
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = findByEmail(username);
-		if (user == null) {
-			throw new UsernameNotFoundException(username);
-		}
-
-		return new UserDetailsImpl(user);
-	}
-
-	@Override
-	public User findByEmail(String email) {
-		return userRepository.findByEmail(email);
-	}
-
-	@Override
-	public String registerUser(User userToRegister) {
-		User userCheck = userRepository.findByEmail(userToRegister.getEmail());
-
-		if (userCheck != null)
-			return "already_exists";
-
-		Role userRole = roleRepository.findByRole(USER_ROLE);
-		if (userRole != null) {
-			userToRegister.getRoles().add(userRole);
-		} else {
-			userToRegister.addRoles(USER_ROLE);
-		}
-		
-		userToRegister.setEnabled(false);
-		userToRegister.setActivation(generateKey());
-                userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
-		userRepository.save(userToRegister);
-		
-                emailService.sendMessage(userToRegister);
-
-		return "registered";
-	}
-
-	public String generateKey()
-    {
-		String key = "";
-		Random random = new Random();
-		char[] word = new char[16]; 
-		for (int j = 0; j < word.length; j++) {
-			word[j] = (char) ('a' + random.nextInt(26));
-		}
-		String toReturn = new String(word);
-		return new String(word);
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-	@Override
-	public String userActivation(String code) {
-		User user = userRepository.findByActivation(code);
-		if (user == null)
-		    return "noresult";
-		
-		user.setEnabled(true);
-		user.setActivation("");
-		userRepository.save(user);
-		return "activated";
-	}
-	
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(username);
+        }
+
+        return new UserDetailsImpl(user);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public String registerUser(User userToRegister) {
+        User userCheck = userRepository.findByEmail(userToRegister.getEmail());
+
+        if (userCheck != null) {
+            return "already_exists";
+        }
+
+        Role userRole = roleRepository.findByRole(USER_ROLE);
+        if (userRole != null) {
+            userToRegister.getRoles().add(userRole);
+        } else {
+            userToRegister.addRoles(USER_ROLE);
+        }
+
+        userToRegister.setEnabled(false);
+        userToRegister.setActivation(generateKey());
+        userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
+        userRepository.save(userToRegister);
+
+        emailService.sendMessage(userToRegister);
+
+        return "registered";
+    }
+
+    @Override
+    public void registerAdmin(User adminToRegister) {
+        adminToRegister.addRoles(USER_ROLE);
+        adminToRegister.addRoles(ADMIN_ROLE);
+        adminToRegister.setEnabled(true);
+        adminToRegister.setActivation("");
+        adminToRegister.setPassword(passwordEncoder.encode(adminToRegister.getPassword()));
+        userRepository.save(adminToRegister);
+    }
+
+    public String generateKey() {
+        String key = "";
+        Random random = new Random();
+        char[] word = new char[16];
+        for (int j = 0; j < word.length; j++) {
+            word[j] = (char) ('a' + random.nextInt(26));
+        }
+        String toReturn = new String(word);
+        return new String(word);
+    }
+
+    @Override
+    public String userActivation(String code) {
+        User user = userRepository.findByActivation(code);
+        if (user == null) {
+            return "noresult";
+        }
+
+        user.setEnabled(true);
+        user.setActivation("");
+        userRepository.save(user);
+        return "activated";
+    }
 
 }

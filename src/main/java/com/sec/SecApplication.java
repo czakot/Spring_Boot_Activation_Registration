@@ -7,9 +7,18 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class SecApplication {
 
+    private static String[] args;
+    private static ConfigurableApplicationContext context;
+
     public static void main(String[] args) {
-        
-//        ConfigurableApplicationContext ctx = SpringApplication.run(SecApplication.class, args);
-        SpringApplication.run(SecApplication.class, args);
+
+        SecApplication.args = args;
+        SecApplication.context = SpringApplication.run(SecApplication.class, args);
+    }
+
+    public static void restart() {
+
+        context.close();
+        SecApplication.context = SpringApplication.run(SecApplication.class, args);
     }
 }
