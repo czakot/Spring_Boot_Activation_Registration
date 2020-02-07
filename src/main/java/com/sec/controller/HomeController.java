@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.sec.entity.User;
 import com.sec.repo.RoleRepository;
 import com.sec.service.UserService;
+import static java.lang.Thread.sleep;
 import java.util.Map;
+import java.util.logging.Level;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -52,21 +54,18 @@ public class HomeController {
     @PostMapping("/adminreg")
     public String adminReg(@ModelAttribute User adminToRegister) {
         userService.registerAdmin(adminToRegister);
-        org.springframework.boot.devtools.restart.Restarter.getInstance().restart(); 
-        return "auth/login";
+//        org.springframework.boot.devtools.restart.Restarter.getInstance().restart(); 
+        return "auth/restartmessage";
     }
 
     @RequestMapping("/restart")
-    private void restart() {
-        Thread restartThread = new Thread(() -> {
-            try {
-                Thread.sleep(1000);
-                SecApplication.restart();
-            } catch (InterruptedException ignored) {
-            }
-        });
-        restartThread.setDaemon(false);
-        restartThread.start();
+    public void restart() {
+        SecApplication.restart();
+        try {
+            sleep(3000);
+        } catch (InterruptedException ex) {
+//            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @RequestMapping("/registration")

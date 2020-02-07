@@ -1,5 +1,6 @@
 package com.sec;
 
+import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -7,18 +8,22 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class SecApplication {
 
-    private static String[] args;
     private static ConfigurableApplicationContext context;
 
     public static void main(String[] args) {
 
-        SecApplication.args = args;
-        SecApplication.context = SpringApplication.run(SecApplication.class, args);
+        context = SpringApplication.run(SecApplication.class, args);
     }
 
     public static void restart() {
+        ApplicationArguments args = context.getBean(ApplicationArguments.class);
 
-        context.close();
-        SecApplication.context = SpringApplication.run(SecApplication.class, args);
+        Thread thread = new Thread(() -> {
+            context.close();
+            context = SpringApplication.run(SecApplication.class, args.getSourceArgs());
+        });
+
+        thread.setDaemon(false);
+        thread.start();
     }
 }

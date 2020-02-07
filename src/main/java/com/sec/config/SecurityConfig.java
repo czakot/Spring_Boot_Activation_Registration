@@ -44,25 +44,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSec) throws Exception {
-		httpSec
-			.authorizeRequests()
-                                .antMatchers("/css/*").permitAll()
-				.antMatchers("/admin/**").hasRole("ADMIN")
-				.antMatchers("/registration").permitAll()
-				.antMatchers("/reg").permitAll()
-				.antMatchers("/adminreg").permitAll()
-				.antMatchers("/activation/**").permitAll()
-				.anyRequest().authenticated()
-				.and()
-			.logout()
-				.logoutSuccessUrl("/login?logout").permitAll();
+            httpSec
+                .authorizeRequests()
+                    .antMatchers("/css/*").permitAll()
+                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .antMatchers("/registration").permitAll()
+                    .antMatchers("/reg").permitAll()
+                    .antMatchers("/adminreg").permitAll()
+                    .antMatchers("/restart").permitAll()
+                    .antMatchers("/activation/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .logout()
+                    .logoutSuccessUrl("/login?logout").permitAll();
 
-                if (roleRepository.findByRole("ADMIN") != null) {
-                    httpSec.formLogin().loginPage("/login").permitAll();
-                } else {
-                    httpSec.formLogin().loginPage("/prelogin").permitAll();
-                }
-                  
+            if (roleRepository.findByRole("ADMIN") != null) {
+                httpSec.formLogin().loginPage("/login").permitAll();
+            } else {
+                httpSec.formLogin().loginPage("/prelogin").permitAll();
+            }
+
 	}	
 	
 }
