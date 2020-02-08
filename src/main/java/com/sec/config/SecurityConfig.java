@@ -52,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/reg").permitAll()
                     .antMatchers("/adminreg").permitAll()
                     .antMatchers("/restart").permitAll()
+                    .antMatchers("/restart_blank").permitAll()
                     .antMatchers("/activation/**").permitAll()
                     .anyRequest().authenticated()
                     .and()

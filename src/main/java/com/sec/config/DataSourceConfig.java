@@ -5,13 +5,20 @@
  */
 package com.sec.config;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.logging.Level;
 import javax.sql.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,64 +30,69 @@ import org.springframework.stereotype.Component;
  */
 @Configuration
 @Component
+@ConfigurationProperties(prefix = "spring.datasource")
 public class DataSourceConfig {
 
-    @Value("${spring.datasource.prefix}")
-    String prefix;
-    @Value("${spring.datasource.hosts}")
-    String[] hosts;
-    @Value("${spring.datasource.port}")
-    String port;
-    @Value("${spring.datasource.dbname}")
-    String dbname;
-    @Value("${spring.datasource.username}")
-    String username;
-    @Value("${spring.datasource.password}")
-    String password;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private long connectionTimeout;
+    private String prefix;
+    private String[] hosts;
+    private String port;
+    private String dbname;
+    private String username;
+    private String password;
 
     @Bean
+//    @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource getDataSource() {
 
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        DataSource dataSource;
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setConnectionTimeout(connectionTimeout);
+//        dataSource.setInitializationFailTimeout(15); // default: 1
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         for (String host : hosts) {
-            if (hostReachable(host)) {
-
-                String url = prefix + "://" + host + ":" + port + "/" + dbname;
-                logger.info("Testing DB connection: " + url);
-                try {
-                    dataSource = DataSourceBuilder
-                        .create()
-                        .url(url)
-                        .username(username)
-                        .password(password)
-                        .build();
-                    dataSource.getConnection();
-                    return dataSource;
-                } catch (SQLException sQLException) {
-                    /* nothing, just step next */ }
+            String url = prefix + "://" + host + ":" + port + "/" + dbname;
+            logger.info("Testing DB connection: " + url);
+            dataSource.setJdbcUrl(url);
+            try {
+                dataSource.getConnection();
+                return dataSource;
+            } catch (SQLException ex) {
             }
         }
-
+        logger.error("No available DB host");
+        //TODO Create embedded DB
         return DataSourceBuilder.create().build();
     }
 
-    private boolean hostReachable(String host) {
-        boolean hostReachable = false;
-        try {
-            if (Character.isLetter(host.charAt(0))) {
-                hostReachable = InetAddress.getByName(host).isReachable(500);
-            } else {
-                byte[] ip = {
-                    (byte)Integer.parseInt(host.substring(0, 2)),
-                    (byte)Integer.parseInt(host.substring(2, 2)),
-                    (byte)Integer.parseInt(host.substring(4, 2)),
-                    (byte)Integer.parseInt(host.substring(6, 2)),
-                };
-                hostReachable = InetAddress.getByAddress(ip).isReachable(500);
-            }
-        } catch (IOException ex) {     }
-        return hostReachable;
+    public void setConnectionTimeout(long connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public void setHosts(String[] hosts) {
+        this.hosts = hosts;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public void setDbname(String dbname) {
+        this.dbname = dbname;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
