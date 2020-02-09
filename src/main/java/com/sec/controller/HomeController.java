@@ -18,12 +18,7 @@ import com.sec.entity.User;
 import com.sec.repo.RoleRepository;
 import com.sec.service.UserService;
 import static java.lang.Thread.sleep;
-import java.util.Map;
-import java.util.logging.Level;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
@@ -54,18 +49,30 @@ public class HomeController {
     @PostMapping("/adminreg")
     public String adminReg(@ModelAttribute User adminToRegister) {
         userService.registerAdmin(adminToRegister);
-//        org.springframework.boot.devtools.restart.Restarter.getInstance().restart(); 
+//        org.springframework.boot.devtools.restart.Restarter.getInstance().restart();
+        Thread thread = new Thread(() -> {
+        try {
+            sleep(3000);
+        } catch (InterruptedException ex) {
+//            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SecApplication.restart();
+        });
+
+        thread.setDaemon(false);
+        thread.start();
+
         return "auth/restartmessage";
     }
 
     @RequestMapping("/restart")
     public void restart() {
         SecApplication.restart();
-        try {
-            sleep(3000);
-        } catch (InterruptedException ex) {
-//            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            sleep(3000);
+//        } catch (InterruptedException ex) {
+////            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     @RequestMapping("/registration")
