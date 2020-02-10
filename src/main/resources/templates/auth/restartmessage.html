@@ -2,24 +2,22 @@
 <html lang="en" layout:decorate="~{layouts/main}">
     <head>
         <title>SFJ - Minden napra egy sztori</title>
-        <!--<meta http-equiv="Refresh" content="15; url=/restart" />-->
     </head>
     <body>
 
-        <div layout:fragment="loginContent">
+        <div layout:fragment="content">
 
-            <!--<h2 class="form-signin-heading">Alkalmazás újraindul ...</h2>-->
             <div class="alert alert-success">
                 Az első admin regisztrálva és loginja megerősítve.<br>
-                Újraindulás <span id="timer">10</span> másodperc múlva.
+                Újraindulás <span id="timer">-5</span> másodperc múlva.
             </div>
         </div>
 
-        <!--<script type="text/javascript" src="../../static/js/custom.js" th:src="@{/js/custom.js}">-->
-
-        <script type="text/javascript" src="/custom.js">
-            countDownInit(15, "http://localhost:8080/");
-            countDown();
-        </script>
+        <th:block layout:fragment="script">
+            <script type="text/javascript" src="../../static/js/custom.js" th:src="@{/js/custom.js}"></script>
+            <script type="text/javascript">
+                countDown(5, "http://localhost:8080/");
+            </script>
+        </th:block>
     </body>
 </html>

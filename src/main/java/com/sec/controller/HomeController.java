@@ -52,7 +52,7 @@ public class HomeController {
 //        org.springframework.boot.devtools.restart.Restarter.getInstance().restart();
         Thread thread = new Thread(() -> {
         try {
-            sleep(3000);
+            sleep(1000);
         } catch (InterruptedException ex) {
 //            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
         }

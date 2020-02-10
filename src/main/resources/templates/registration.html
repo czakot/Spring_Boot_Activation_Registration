@@ -5,7 +5,7 @@
 </head>
 <body>
 
-    <div layout:fragment="loginContent">
+    <div layout:fragment="content">
 
         <form name="registration" th:action="@{/reg}" th:object="${user}" method="post" class="form-signin">
                 <div id="err" th:if="${result} == 'already_exists'" class="alert alert-danger">Ezen az email címen már regisztrált felhasználó!</div>
