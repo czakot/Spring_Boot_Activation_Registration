@@ -17,5 +17,10 @@ function countDown() {
     }
 }
 
+function modosit() {
+    
+        document.getElementById("felirat").innerHTML = "egészen más";
+}
+
 
 
