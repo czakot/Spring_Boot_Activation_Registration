@@ -8,7 +8,7 @@
         <div layout:fragment="content">
 
             <div class="alert alert-success">
-                Az első admin regisztrálva és loginja megerősítve.<br>
+                A Master admin regisztrálva és loginja megerősítve.<br>
                 Újraindulás <span id="timer">-5</span> másodperc múlva.
             </div>
         </div>
@@ -16,7 +16,7 @@
         <th:block layout:fragment="script">
             <script type="text/javascript" src="../../static/js/custom.js" th:src="@{/js/custom.js}"></script>
             <script type="text/javascript">
-                countDown(5, "http://localhost:8080/");
+                countDown(5, "https://localhost:8443/");
             </script>
         </th:block>
     </body>

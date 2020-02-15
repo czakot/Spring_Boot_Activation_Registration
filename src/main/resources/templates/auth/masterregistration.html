@@ -7,8 +7,8 @@
 
     <div layout:fragment="content">
 
-        <form name="registration" th:action="@{/adminreg}" th:object="${user}" method="post" class="form-signin">
-                <h1 class="form-signin-heading">Első admin regisztráció</h1>
+        <form name="registration" th:action="@{/masterreg}" th:object="${user}" method="post" class="form-signin">
+                <h1 class="form-signin-heading">Mesteradmin regisztráció</h1>
                 <input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-control" placeholder="Teljes név" required="true" /> 
                 <input type="text" id="email" name="username" th:field="*{email}" class="form-control" placeholder="E-mail cím" required="true" /> 
                 <input type="password" id="password" name="password" class="form-control" placeholder="Jelszó" required="true" />

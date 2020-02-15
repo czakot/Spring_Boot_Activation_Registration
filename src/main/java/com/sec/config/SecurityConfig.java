@@ -51,16 +51,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/registration").permitAll()
                     .antMatchers("/reg").permitAll()
-                    .antMatchers("/adminreg").permitAll()
+                    .antMatchers("/masterreg").permitAll()
                     .antMatchers("/restart").permitAll()
-                    .antMatchers("/restart_blank").permitAll()
                     .antMatchers("/activation/**").permitAll()
                     .anyRequest().authenticated()
                     .and()
                 .logout()
-                    .logoutSuccessUrl("/login?logout").permitAll();
+                    .logoutSuccessUrl("/login?logout").permitAll()
+                    .and()
+                .requiresChannel().anyRequest().requiresSecure().and() // instead of server.ssl.enabled = true
+                .portMapper().http(8080).mapsTo(8443);
+                
+                
 
-            if (roleRepository.findByRole("ADMIN") != null) {
+            if (roleRepository.findByRole("MASTER") != null) {
                 httpSec.formLogin().loginPage("/login").permitAll();
             } else {
                 httpSec.formLogin().loginPage("/prelogin").permitAll();

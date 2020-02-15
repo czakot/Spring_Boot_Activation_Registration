@@ -22,6 +22,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final String USER_ROLE = "USER";
     private final String ADMIN_ROLE = "ADMIN";
+    private final String MASTER_ROLE = "MASTER";
 
     private UserRepository userRepository;
     private RoleRepository roleRepository;
@@ -77,13 +78,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void registerAdmin(User adminToRegister) {
-        adminToRegister.addRoles(USER_ROLE);
-        adminToRegister.addRoles(ADMIN_ROLE);
-        adminToRegister.setEnabled(true);
-        adminToRegister.setActivation("");
-        adminToRegister.setPassword(passwordEncoder.encode(adminToRegister.getPassword()));
-        userRepository.save(adminToRegister);
+    public void registerMaster(User masterToRegister) {
+        masterToRegister.addRoles(USER_ROLE);
+        masterToRegister.addRoles(ADMIN_ROLE);
+        masterToRegister.addRoles(MASTER_ROLE);
+        masterToRegister.setEnabled(true);
+        masterToRegister.setActivation("");
+        masterToRegister.setPassword(passwordEncoder.encode(masterToRegister.getPassword()));
+        userRepository.save(masterToRegister);
     }
 
     public String generateKey() {

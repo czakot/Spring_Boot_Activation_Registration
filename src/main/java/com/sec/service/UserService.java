@@ -10,6 +10,6 @@ public interface UserService {
 
     public String userActivation(String code);
 
-    public void registerAdmin(User adminToRegister);
+    public void registerMaster(User adminToRegister);
 
 }

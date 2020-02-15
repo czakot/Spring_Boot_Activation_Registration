@@ -37,42 +37,29 @@ public class HomeController {
     RoleRepository roleRepository;
 
     @RequestMapping("/prelogin")
-    public String preloginAdminCheck(Model model) {
-        if (roleRepository.findByRole("ADMIN") != null) {
-            return "auth/login";
-        } else {
+    public String preloginMasterCheck(Model model) {
+        if (roleRepository.findByRole("MASTER") == null) {
             model.addAttribute("user", new User());
-            return "auth/adminregistration";
+            return "auth/masterregistration";
+        } else {
+            return "auth/login";
         }
     }
 
-    @PostMapping("/adminreg")
-    public String adminReg(@ModelAttribute User adminToRegister) {
-        userService.registerAdmin(adminToRegister);
-//        org.springframework.boot.devtools.restart.Restarter.getInstance().restart();
+    @PostMapping("/masterreg")
+    public String adminReg(@ModelAttribute User masterToRegister) {
+        userService.registerMaster(masterToRegister);
         Thread thread = new Thread(() -> {
-        try {
-            sleep(1000);
-        } catch (InterruptedException ex) {
-//            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        SecApplication.restart();
+            try {
+                sleep(1000);
+            } catch (InterruptedException ex) { /* nothing to do */ }
+            SecApplication.restart();
         });
 
         thread.setDaemon(false);
         thread.start();
 
         return "auth/restartmessage";
-    }
-
-    @RequestMapping("/restart")
-    public void restart() {
-        SecApplication.restart();
-//        try {
-//            sleep(3000);
-//        } catch (InterruptedException ex) {
-////            java.util.logging.Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 
     @RequestMapping("/registration")
