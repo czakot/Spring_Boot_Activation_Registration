@@ -19,6 +19,8 @@ import com.sec.repo.RoleRepository;
 import com.sec.service.UserService;
 import static java.lang.Thread.sleep;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
@@ -36,51 +38,36 @@ public class HomeController {
     @Autowired
     RoleRepository roleRepository;
 
-    @RequestMapping("/prelogin")
-    public String preloginMasterCheck(Model model) {
-        if (roleRepository.findByRole("MASTER") == null) {
-            model.addAttribute("user", new User());
-            return "auth/masterregistration";
-        } else {
-            return "auth/login";
-        }
+    @GetMapping("/masterreg")
+    public String masterReg(Model model) {
+        model.addAttribute("user", new User());
+        return "auth/masterregform";
     }
 
-    @PostMapping("/masterreg")
-    public String adminReg(@ModelAttribute User masterToRegister) {
+    @PostMapping("/masterregdo")
+    public String masterReg(@ModelAttribute User masterToRegister) {
         userService.registerMaster(masterToRegister);
-        Thread thread = new Thread(() -> {
-            try {
-                sleep(1000);
-            } catch (InterruptedException ex) { /* nothing to do */ }
-            SecApplication.restart();
-        });
 
-        thread.setDaemon(false);
-        thread.start();
-
-        return "auth/restartmessage";
+        return "auth/activatemastermsg";
     }
 
-    @RequestMapping("/registration")
+    @RequestMapping(value = "/registration")
     public String registration(Model model) {
         model.addAttribute("user", new User());
-        return "registration";
+        return "auth/registration";
     }
 
 //	@RequestMapping(value = "/reg", method = RequestMethod.POST)
-    @PostMapping("/reg")
+    @PostMapping("/registration")
     public String reg(@ModelAttribute User userToRegister, Model model) {
-        String result = userService.registerUser(userToRegister);
-        if (result.equals("already_exists")) {
+        if (!userService.registerUser(userToRegister)) {
             User newUser = new User();
             newUser.setEmail(userToRegister.getEmail());
             model.addAttribute("user", newUser);
-            model.addAttribute("result", result);
-            return "registration";
-        }
-        if (result.equals("registered")) {
-            model.addAttribute("result", result);
+            model.addAttribute("result", "already_exists");
+            return "auth/registration";
+        } else {
+            model.addAttribute("result", "registered");
         }
         return "auth/login";
     }
@@ -88,11 +75,27 @@ public class HomeController {
     @RequestMapping(path = "/activation/{code}", method = RequestMethod.GET)
 //	    public String activation(@PathVariable("code") String code, HttpServletResponse response) {
     public String activation(@PathVariable("code") String code, Model model) {
-        String result = userService.userActivation(code);
-        if (result.equals("activated")) {
-            model.addAttribute("result", result);
-        }
-        return "auth/login";
-    }
+        User activatedUser = userService.userActivation(code);
+        if (userService.isMaster(activatedUser)) {
+            Thread thread = new Thread(() -> {
+                try {
+                    sleep(1000);
+                } catch (InterruptedException ex) {
+                    /* nothing to do */ }
+                SecApplication.restart();
+            });
 
+            thread.setDaemon(false);
+            thread.start();
+
+            return "auth/restartmsg";
+        }
+        if (userService.enabledMasterExists()) {
+            model.addAttribute("result", activatedUser != null ? "activated" : "notactivated");
+            return "auth/login";
+        }
+        
+        return "auth/activatemastermsg";
+
+    }
 }

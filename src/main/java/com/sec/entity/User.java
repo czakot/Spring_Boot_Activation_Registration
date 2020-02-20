@@ -105,7 +105,8 @@ public class User {
     }
 
     public void addRoles(String roleName) {
-        if (this.roles == null || this.roles.isEmpty()) {
+//        if (this.roles == null || this.roles.isEmpty()) {
+        if (this.roles == null) {
             this.roles = new HashSet<>();
         }
         this.roles.add(new Role(roleName));

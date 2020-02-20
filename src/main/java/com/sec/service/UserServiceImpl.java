@@ -2,10 +2,7 @@ package com.sec.service;
 
 import java.util.Random;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -53,39 +50,42 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public String registerUser(User userToRegister) {
-        User userCheck = userRepository.findByEmail(userToRegister.getEmail());
+    public boolean registerUser(User userToRegister) {
+        boolean registered = register(userToRegister, new String[]{USER_ROLE});
 
-        if (userCheck != null) {
-            return "already_exists";
+        if (registered) {
+            emailService.sendMessage(userToRegister);
         }
 
-        Role userRole = roleRepository.findByRole(USER_ROLE);
-        if (userRole != null) {
-            userToRegister.getRoles().add(userRole);
-        } else {
-            userToRegister.addRoles(USER_ROLE);
-        }
-
-        userToRegister.setEnabled(false);
-        userToRegister.setActivation(generateKey());
-        userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
-        userRepository.save(userToRegister);
-
-        emailService.sendMessage(userToRegister);
-
-        return "registered";
+        return registered;
     }
 
     @Override
     public void registerMaster(User masterToRegister) {
-        masterToRegister.addRoles(USER_ROLE);
-        masterToRegister.addRoles(ADMIN_ROLE);
-        masterToRegister.addRoles(MASTER_ROLE);
-        masterToRegister.setEnabled(true);
-        masterToRegister.setActivation("");
-        masterToRegister.setPassword(passwordEncoder.encode(masterToRegister.getPassword()));
-        userRepository.save(masterToRegister);
+        register(masterToRegister, new String[]{USER_ROLE, ADMIN_ROLE, MASTER_ROLE});
+        emailService.sendMessage(masterToRegister);
+    }
+
+    private boolean register(User user, String[] roles) {
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            return false;
+        }
+
+        for (String roleName : roles) {
+            Role role = roleRepository.findByRole(roleName);
+            if (role != null) {
+                user.getRoles().add(role);
+            } else {
+                user.addRoles(roleName);
+            }
+        }
+
+        user.setEnabled(false);
+        user.setActivation(generateKey());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+
+        return true;
     }
 
     public String generateKey() {
@@ -95,21 +95,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         for (int j = 0; j < word.length; j++) {
             word[j] = (char) ('a' + random.nextInt(26));
         }
-        String toReturn = new String(word);
         return new String(word);
     }
 
     @Override
-    public String userActivation(String code) {
+    public User userActivation(String code) {
         User user = userRepository.findByActivation(code);
-        if (user == null) {
-            return "noresult";
+        if (user != null) {
+            user.setEnabled(true);
+            user.setActivation("");
+            userRepository.save(user);
         }
 
-        user.setEnabled(true);
-        user.setActivation("");
-        userRepository.save(user);
-        return "activated";
+        return user;
+    }
+
+    @Override
+    public boolean enabledMasterExists() {
+        User user = userRepository.findMaster();
+        return user != null && user.getEnabled();
+    }
+
+    @Override
+    public void deleteNotValidatedMaster() {
+        User user = userRepository.findMaster();
+        if (user != null && !user.getEnabled()) {
+            user.getRoles().clear();
+            userRepository.delete(user);
+        }
+    }
+
+    @Override
+    public boolean isMaster(User user) {
+        return user!= null && user.getRoles().contains(roleRepository.findByRole(MASTER_ROLE));
     }
 
 }

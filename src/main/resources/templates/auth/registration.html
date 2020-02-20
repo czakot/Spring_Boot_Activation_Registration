@@ -7,12 +7,12 @@
 
     <div layout:fragment="content">
 
-        <form name="registration" th:action="@{/reg}" th:object="${user}" method="post" class="form-signin">
+        <form name="registration" th:action="@{/registration}" th:object="${user}" method="post" class="form-signin">
                 <div id="err" th:if="${result} == 'already_exists'" class="alert alert-danger">Ezen az email címen már regisztrált felhasználó!</div>
                 <h2 class="form-signin-heading">Kérlek regisztrálj</h2>
                 <input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-control" placeholder="Teljes név" /> 
-                <!--<input type="text" id="email" name="username" th:field="*{email}" class="form-control" placeholder="E-mail cím" />--> 
-                <input type="text" id="email" name="email" th:value="${user.email}" class="form-control" placeholder="E-mail cím" /> 
+                <input type="text" id="email" name="username" th:field="*{email}" class="form-control" placeholder="E-mail cím" /> 
+                <!--<input type="text" id="email" name="email" th:value="${user.email}" class="form-control" placeholder="E-mail cím" />--> 
                 <!--<input type="text" id="email" name="email" class="form-control" placeholder="E-mail cím" value="huggy.bear@freemail.hu"/>--> 
                 <input type="password" id="password" name="password" th:field="*{password}"  class="form-control" placeholder="Jelszó" />
                 <button class="btn btn-lg btn-primary btn-block" type="submit">Regisztráció</button>
